@@ -1,0 +1,85 @@
+name: Generate and Deploy Market Schedule
+
+on:
+  # Run on push to main branch
+  push:
+    branches: [ main ]
+  # Allow manual triggering
+  workflow_dispatch:
+  # Run once a day at 23.00 UTC
+  schedule:
+    - cron: '0 23 * * *'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31.3.0
+        with:
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5.0.0
+
+      - name: Generate schedule
+        run: |
+          # Use nix develop to run the script with all dependencies
+          nix develop --command python schedule.py -o public/market_schedule.png
+
+      - name: Create index.html
+        run: |
+          cat > public/index.html << EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Market Volunteer Schedule</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      margin: 0;
+                      padding: 20px;
+                      text-align: center;
+                  }
+                  .schedule-container {
+                      max-width: 100%;
+                      margin: 20px auto;
+                  }
+                  img {
+                      max-width: 100%;
+                      height: auto;
+                      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                  }
+                  footer {
+                      margin-top: 30px;
+                      color: #666;
+                      font-size: 0.8em;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>Market Volunteer Schedule</h1>
+              <div class="schedule-container">
+                  <img src="market_schedule.png" alt="Market Volunteer Schedule">
+              </div>
+              <footer>
+                  Last updated: $(date)
+              </footer>
+          </body>
+          </html>
+          EOF
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4.0.0
+        with:
+          github_token: \${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
