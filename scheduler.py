@@ -1,9 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import argparse  # Added for command-line argument handling
 
-# --- Step 1: Load data from READ ONLY Google Sheet ---
-# Have nothing private in the sheet, just a public link
+# Set up command-line argument parsing
+parser = argparse.ArgumentParser(description="Generate market volunteer schedule")
+parser.add_argument(
+    "-o", "--output", help="Output file path", default="market_schedule.png"
+)
+args = parser.parse_args()
+
+# --- Step 1: Load data from Google Sheet ---
 sheet_id = "1HmZkAAB24gvqoZYpT3ndJMlEQ_gx5oJunkNYUlLWuU4"
 csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
 df = pd.read_csv(csv_url)
@@ -94,11 +101,13 @@ ax.set_title("Hemelvaartsdag schema", fontsize=12)
 plt.tight_layout()
 
 # Add export function
-def save_schedule(filename="market_schedule.png", dpi=300):
+def save_schedule(filename, dpi=300):
     plt.savefig(filename, dpi=dpi, bbox_inches="tight")
     print(f"Schedule saved as {filename}")
 
 
-# Example usage
-plt.show()
-save_schedule()  # This will save the image after displaying it
+# Save the plot using the specified output path
+save_schedule(args.output)
+print("Schedule generated successfully. Exiting...")
+# Don't use plt.show() in non-interactive environments
+# plt.show()  # This line is now commented out
