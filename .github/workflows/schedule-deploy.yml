@@ -34,14 +34,6 @@ jobs:
           nix develop --command python scheduler.py -o public/market_schedule.png
         shell: bash
 
-      - name: Override public/market_schedule.png
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add public/market_schedule.png
-          git commit -m "Auto-update market schedule image" || echo "No changes"
-          git push
-        shell: bash
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4.0.0
