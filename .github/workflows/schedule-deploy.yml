@@ -31,55 +31,7 @@ jobs:
 
       - name: Generate schedule
         run: |
-          # Use nix develop to run the script with all dependencies
-          nix develop --command python schedule.py -o public/market_schedule.png
-        working-directory: ./hemelvaartsdagplanning
-        shell: bash
-
-      - name: Create index.html
-        run: |
-          cat > public/index.html << EOF
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Market Volunteer Schedule</title>
-              <style>
-                  body {
-                      font-family: Arial, sans-serif;
-                      margin: 0;
-                      padding: 20px;
-                      text-align: center;
-                  }
-                  .schedule-container {
-                      max-width: 100%;
-                      margin: 20px auto;
-                  }
-                  img {
-                      max-width: 100%;
-                      height: auto;
-                      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                  }
-                  footer {
-                      margin-top: 30px;
-                      color: #666;
-                      font-size: 0.8em;
-                  }
-              </style>
-          </head>
-          <body>
-              <h1>Market Volunteer Schedule</h1>
-              <div class="schedule-container">
-                  <img src="market_schedule.png" alt="Market Volunteer Schedule">
-              </div>
-              <footer>
-                  Last updated: $(date)
-              </footer>
-          </body>
-          </html>
-          EOF
-        working-directory: ./hemelvaartsdagplanning
+          nix develop --command python scheduler.py -o public/market_schedule.png
         shell: bash
 
       - name: Deploy to GitHub Pages
@@ -87,3 +39,12 @@ jobs:
         with:
           github_token: \${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+
+      - name: Override public/market_schedule.png
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git add public/market_schedule.png
+          git commit -m "Auto-update market schedule image" || echo "No changes"
+          git push origin main
+        shell: bash
