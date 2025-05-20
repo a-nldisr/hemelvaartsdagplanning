@@ -33,6 +33,8 @@ jobs:
         run: |
           # Use nix develop to run the script with all dependencies
           nix develop --command python schedule.py -o public/market_schedule.png
+        working-directory: ./hemelvaartsdagplanning
+        shell: bash
 
       - name: Create index.html
         run: |
@@ -77,6 +79,8 @@ jobs:
           </body>
           </html>
           EOF
+        working-directory: ./hemelvaartsdagplanning
+        shell: bash
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4.0.0
