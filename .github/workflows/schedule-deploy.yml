@@ -34,12 +34,6 @@ jobs:
           nix develop --command python scheduler.py -o public/market_schedule.png
         shell: bash
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4.0.0
-        with:
-          github_token: \${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-
       - name: Override public/market_schedule.png
         run: |
           git config user.name github-actions[bot]
@@ -48,3 +42,9 @@ jobs:
           git commit -m "Auto-update market schedule image" || echo "No changes"
           git push
         shell: bash
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4.0.0
+        with:
+          github_token: \${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
