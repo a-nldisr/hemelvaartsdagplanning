@@ -31,7 +31,7 @@ jobs:
 
       - name: Generate schedule
         run: |
-          nix develop --command python scheduler.py -o public/market_schedule.png
+          nix develop --command python scheduler.py -o ./market_schedule.png
         shell: bash
 
 
@@ -39,4 +39,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./
