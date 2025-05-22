@@ -2,4 +2,4 @@
 
 ## Mark Schema
 
-![Markt Schema](public/market_schedule.png)
+![Markt Schema](market_schedule.png)
